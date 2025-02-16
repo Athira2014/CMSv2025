@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,6 +22,7 @@ import com.athira.demo.entity.LabTestDetails;
 import com.athira.demo.entity.LabTestPrescription;
 import com.athira.demo.entity.LabTestResult;
 import com.athira.demo.service.ILabTestService;
+import com.athira.demo.util.JwtUtils;
 
 @RestController
 @RequestMapping("api/")
@@ -28,6 +30,9 @@ public class LabController {
 
 	@Autowired
 	ILabTestService labTestService;
+
+	@Autowired
+	JwtUtils jwtUtils;
 
 	@GetMapping("labTests")
 	public List<LabTest> getAllLabTests() {
@@ -43,12 +48,12 @@ public class LabController {
 	public List<LabTestDetails> getAllLabTestDetails() {
 		return labTestService.getAllLabTestDetails();
 	}
-	
+
 	@GetMapping("labtestresults")
 	public List<LabTestResult> getAllLabTestResults() {
 		return labTestService.getAllLabTestResults();
 	}
-	
+
 	@GetMapping("labtestresults/{detailId}")
 	public List<LabTestResult> getLabTestResultsByDetailsId(@PathVariable Integer detailId) {
 		return labTestService.getLabTestResultsByDetailsId(detailId);
@@ -56,9 +61,16 @@ public class LabController {
 
 	// create lab Test Categories
 	@PostMapping("labTestCategories")
-	public ResponseEntity<APIResponse> addlabTestCategories(@RequestBody LabTestCategory labTestCategory) {
+	public ResponseEntity<APIResponse> addlabTestCategories(@RequestBody LabTestCategory labTestCategory,
+			@RequestHeader(value = "authorization", defaultValue = "") String auth) {
 
 		APIResponse apiResponse = new APIResponse();
+
+		ResponseEntity<APIResponse> tokenResponse = jwtUtils.verifyToken(auth);
+
+		if (tokenResponse != null) {
+			return tokenResponse;
+		}
 
 		try {
 			LabTestCategory labTestCategoryEntity = labTestService.savelabTestCategories(labTestCategory);
@@ -75,9 +87,16 @@ public class LabController {
 
 	// update lab Test Categories
 	@PutMapping("labTestCategories")
-	public ResponseEntity<APIResponse> updatelabTestCategories(@RequestBody LabTestCategory labTestCategory) {
+	public ResponseEntity<APIResponse> updatelabTestCategories(@RequestBody LabTestCategory labTestCategory,
+			@RequestHeader(value = "authorization", defaultValue = "") String auth) {
 
 		APIResponse apiResponse = new APIResponse();
+
+		ResponseEntity<APIResponse> tokenResponse = jwtUtils.verifyToken(auth);
+
+		if (tokenResponse != null) {
+			return tokenResponse;
+		}
 
 		try {
 			LabTestCategory labTestCategoryEntity = labTestService.updatelabTestCategories(labTestCategory);
@@ -94,9 +113,15 @@ public class LabController {
 
 	// Disable lab Test Categories
 	@DeleteMapping("labTestCategories/{id}")
-	public ResponseEntity<APIResponse> disableLabTestCategories(@PathVariable Integer id) {
+	public ResponseEntity<APIResponse> disableLabTestCategories(@PathVariable Integer id,
+			@RequestHeader(value = "authorization", defaultValue = "") String auth) {
 
 		APIResponse apiResponse = new APIResponse();
+		ResponseEntity<APIResponse> tokenResponse = jwtUtils.verifyToken(auth);
+
+		if (tokenResponse != null) {
+			return tokenResponse;
+		}
 
 		try {
 			LabTestCategory labTestCategoryEntity = labTestService.disableLabTestCategories(id);
@@ -113,9 +138,15 @@ public class LabController {
 
 	// create lab Test
 	@PostMapping("labTests")
-	public ResponseEntity<APIResponse> addlabTests(@RequestBody LabTest labTest) {
+	public ResponseEntity<APIResponse> addlabTests(@RequestBody LabTest labTest,
+			@RequestHeader(value = "authorization", defaultValue = "") String auth) {
 
 		APIResponse apiResponse = new APIResponse();
+		ResponseEntity<APIResponse> tokenResponse = jwtUtils.verifyToken(auth);
+
+		if (tokenResponse != null) {
+			return tokenResponse;
+		}
 
 		try {
 			LabTest labTestEntity = labTestService.savelabTests(labTest);
@@ -151,9 +182,15 @@ public class LabController {
 
 	// Disable lab Test
 	@DeleteMapping("labTests/{id}")
-	public ResponseEntity<APIResponse> disableLabTest(@PathVariable Integer id) {
+	public ResponseEntity<APIResponse> disableLabTest(@PathVariable Integer id,
+			@RequestHeader(value = "authorization", defaultValue = "") String auth) {
 
 		APIResponse apiResponse = new APIResponse();
+		ResponseEntity<APIResponse> tokenResponse = jwtUtils.verifyToken(auth);
+
+		if (tokenResponse != null) {
+			return tokenResponse;
+		}
 
 		try {
 			LabTest labTestEntity = labTestService.disableLabTest(id);
@@ -171,9 +208,15 @@ public class LabController {
 	// create lab test prescriptions
 	@PostMapping("labtestprescription")
 	public ResponseEntity<APIResponse> addLabTestPrescription(
-			@RequestBody LabTestPrescriptionDto labTestPrescriptionDto) {
+			@RequestBody LabTestPrescriptionDto labTestPrescriptionDto,
+			@RequestHeader(value = "authorization", defaultValue = "") String auth) {
 
 		APIResponse apiResponse = new APIResponse();
+		ResponseEntity<APIResponse> tokenResponse = jwtUtils.verifyToken(auth);
+
+		if (tokenResponse != null) {
+			return tokenResponse;
+		}
 
 		try {
 			LabTestPrescription labTestPrescription = labTestPrescriptionDto.getLabTestPrescription();
@@ -197,6 +240,11 @@ public class LabController {
 			@RequestBody LabTestPrescriptionDto labTestPrescriptionDto) {
 
 		APIResponse apiResponse = new APIResponse();
+		ResponseEntity<APIResponse> tokenResponse = jwtUtils.verifyToken(auth);
+
+		if (tokenResponse != null) {
+			return tokenResponse;
+		}
 
 		try {
 			LabTestPrescription labTestPrescription = labTestPrescriptionDto.getLabTestPrescription();
@@ -214,11 +262,16 @@ public class LabController {
 		return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
 	}
 
-
 	@PostMapping("labTestDetails")
-	public ResponseEntity<APIResponse> addLabTestDetails(@RequestBody LabTestDetails labTestDetails) {
-		 
+	public ResponseEntity<APIResponse> addLabTestDetails(@RequestBody LabTestDetails labTestDetails,
+			@RequestHeader(value = "authorization", defaultValue = "") String auth) {
+
 		APIResponse apiResponse = new APIResponse();
+		ResponseEntity<APIResponse> tokenResponse = jwtUtils.verifyToken(auth);
+
+		if (tokenResponse != null) {
+			return tokenResponse;
+		}
 
 		try {
 			LabTestDetails labTestDetailsEntity = labTestService.addLabTestDetails(labTestDetails);
@@ -231,12 +284,18 @@ public class LabController {
 		}
 
 		return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
-	} 
-	
+	}
+
 	@PutMapping("labTestDetails")
-	public ResponseEntity<APIResponse> updateLabTestDetails(@RequestBody LabTestDetails labTestDetails) {
-		 
+	public ResponseEntity<APIResponse> updateLabTestDetails(@RequestBody LabTestDetails labTestDetails,
+			@RequestHeader(value = "authorization", defaultValue = "") String auth) {
+
 		APIResponse apiResponse = new APIResponse();
+		ResponseEntity<APIResponse> tokenResponse = jwtUtils.verifyToken(auth);
+
+		if (tokenResponse != null) {
+			return tokenResponse;
+		}
 
 		try {
 			LabTestDetails labTestDetailsEntity = labTestService.updateLabTestDetails(labTestDetails);
@@ -250,11 +309,17 @@ public class LabController {
 
 		return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
 	}
-	
+
 	@PostMapping("labtestresults")
-	public ResponseEntity<APIResponse> addLabTestResults(@RequestBody LabTestResult labTestResult) {
-		 
+	public ResponseEntity<APIResponse> addLabTestResults(@RequestBody LabTestResult labTestResult,
+			@RequestHeader(value = "authorization", defaultValue = "") String auth) {
+
 		APIResponse apiResponse = new APIResponse();
+		ResponseEntity<APIResponse> tokenResponse = jwtUtils.verifyToken(auth);
+
+		if (tokenResponse != null) {
+			return tokenResponse;
+		}
 
 		try {
 			LabTestResult labTestResultEntity = labTestService.addLabTestResults(labTestResult);
@@ -267,5 +332,5 @@ public class LabController {
 		}
 
 		return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
-	} 
+	}
 }

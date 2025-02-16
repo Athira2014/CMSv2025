@@ -2,8 +2,10 @@ package com.athira.demo.util;
 
 import java.util.Date;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import com.athira.demo.common.APIResponse;
 import com.athira.demo.common.AccessDeniedException;
 import com.athira.demo.entity.User;
 
@@ -59,6 +61,20 @@ public class JwtUtils {
 			throw new AccessDeniedException("Sorry! Access Denied");
 		}
 
+	}
+
+	public ResponseEntity<APIResponse> verifyToken(String auth) {
+	    APIResponse apiResponse = new APIResponse();
+	    try {
+	        //verify() verfify and throws an exception on invalid/expired token
+	        verify(auth);
+	        return null; // Return null when token is valid to continue further processing
+	    } catch (Exception e) {
+	        // Token verification failed (expired or invalid)
+	        apiResponse.setStatus(401); // Unauthorized
+	        apiResponse.setData("Invalid or expired token");
+	        return ResponseEntity.status(401).body(apiResponse);
+	    }
 	}
 
 }

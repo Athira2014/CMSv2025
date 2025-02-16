@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,6 +21,7 @@ import com.athira.demo.entity.DoctorsAvailability;
 import com.athira.demo.entity.MedicinePrescription;
 import com.athira.demo.entity.Specialization;
 import com.athira.demo.service.IDoctorService;
+import com.athira.demo.util.JwtUtils;
 
 @RestController
 @RequestMapping("api/")
@@ -27,6 +29,9 @@ public class DoctorController {
 
 	@Autowired
 	IDoctorService doctorService;
+
+	@Autowired
+	JwtUtils jwtUtils;
 
 	// List of Doctors
 	@GetMapping("doctors/{userid}")
@@ -56,15 +61,41 @@ public class DoctorController {
 
 	// Get specializations
 	@GetMapping("specializations")
-	public List<Specialization> getAllSpecializations() {
-		return doctorService.getAllSpecializations();
+	public ResponseEntity<APIResponse> getAllSpecializations(
+			@RequestHeader(value = "authorization", defaultValue = "") String auth) {
+
+		ResponseEntity<APIResponse> tokenVerificationResponse = jwtUtils.verifyToken(auth);
+
+		// Return the response if the token is invalid/expired
+		if (tokenVerificationResponse != null) {
+			return tokenVerificationResponse;
+		}
+		APIResponse apiResponse = new APIResponse();
+		try {
+			List<Specialization> specializations = doctorService.getAllSpecializations();
+			apiResponse.setStatus(200);
+			apiResponse.setData(specializations);
+
+		} catch (Exception e) {
+			apiResponse.setStatus(500);
+			apiResponse.setError(e.getMessage());
+		}
+
+		return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
 	}
 
 	// create specializations
 	@PostMapping("specializations")
-	public ResponseEntity<APIResponse> addSpecialization(@RequestBody Specialization specialization) {
+	public ResponseEntity<APIResponse> addSpecialization(@RequestBody Specialization specialization,
+			@RequestHeader(value = "authorization", defaultValue = "") String auth) {
 
 		APIResponse apiResponse = new APIResponse();
+		ResponseEntity<APIResponse> tokenVerificationResponse = jwtUtils.verifyToken(auth);
+
+		// Return the response if the token is invalid/expired
+		if (tokenVerificationResponse != null) {
+			return tokenVerificationResponse;
+		}
 
 		try {
 			Specialization specializationEntity = doctorService.saveSpecialization(specialization);
@@ -81,9 +112,18 @@ public class DoctorController {
 
 	// Update specializations
 	@PutMapping("specializations")
-	public ResponseEntity<APIResponse> updateSpecialization(@RequestBody Specialization specialization) {
+	public ResponseEntity<APIResponse> updateSpecialization(@RequestBody Specialization specialization,
+			@RequestHeader(value = "authorization", defaultValue = "") String auth) {
 
 		APIResponse apiResponse = new APIResponse();
+
+		// authorization
+		ResponseEntity<APIResponse> tokenVerificationResponse = jwtUtils.verifyToken(auth);
+
+		// Return the response if the token is invalid/expired
+		if (tokenVerificationResponse != null) {
+			return tokenVerificationResponse;
+		}
 
 		try {
 			Specialization specializationEntity = doctorService.saveSpecialization(specialization);
@@ -100,9 +140,18 @@ public class DoctorController {
 
 	// Delete specializations
 	@DeleteMapping("specializations/{id}")
-	public ResponseEntity<APIResponse> deleteSpecialization(@PathVariable Integer id) {
+	public ResponseEntity<APIResponse> deleteSpecialization(@PathVariable Integer id,
+			@RequestHeader(value = "authorization", defaultValue = "") String auth) {
 
 		APIResponse apiResponse = new APIResponse();
+
+		// authorization
+		ResponseEntity<APIResponse> tokenVerificationResponse = jwtUtils.verifyToken(auth);
+
+		// Return the response if the token is invalid/expired
+		if (tokenVerificationResponse != null) {
+			return tokenVerificationResponse;
+		}
 
 		try {
 			doctorService.deleteSpecialization(id);
@@ -119,7 +168,16 @@ public class DoctorController {
 
 	// create doctors
 	@PostMapping("doctors")
-	public ResponseEntity<APIResponse> addDoctor(@RequestBody Doctor doctor) {
+	public ResponseEntity<APIResponse> addDoctor(@RequestBody Doctor doctor,
+			@RequestHeader(value = "authorization", defaultValue = "") String auth) {
+
+		// authorization
+		ResponseEntity<APIResponse> tokenVerificationResponse = jwtUtils.verifyToken(auth);
+
+		// Return the response if the token is invalid/expired
+		if (tokenVerificationResponse != null) {
+			return tokenVerificationResponse;
+		}
 
 		APIResponse apiResponse = new APIResponse();
 
@@ -138,7 +196,16 @@ public class DoctorController {
 
 	// Update doctors
 	@PutMapping("doctors")
-	public ResponseEntity<APIResponse> updateDoctor(@RequestBody Doctor doctor) {
+	public ResponseEntity<APIResponse> updateDoctor(@RequestBody Doctor doctor,
+			@RequestHeader(value = "authorization", defaultValue = "") String auth) {
+
+		// authorization
+		ResponseEntity<APIResponse> tokenVerificationResponse = jwtUtils.verifyToken(auth);
+
+		// Return the response if the token is invalid/expired
+		if (tokenVerificationResponse != null) {
+			return tokenVerificationResponse;
+		}
 
 		APIResponse apiResponse = new APIResponse();
 
@@ -157,7 +224,16 @@ public class DoctorController {
 
 	// Disable doctors
 	@DeleteMapping("doctors/{id}")
-	public ResponseEntity<APIResponse> disableDoctor(@PathVariable Integer id) {
+	public ResponseEntity<APIResponse> disableDoctor(@PathVariable Integer id,
+			@RequestHeader(value = "authorization", defaultValue = "") String auth) {
+
+		// authorization
+		ResponseEntity<APIResponse> tokenVerificationResponse = jwtUtils.verifyToken(auth);
+
+		// Return the response if the token is invalid/expired
+		if (tokenVerificationResponse != null) {
+			return tokenVerificationResponse;
+		}
 
 		APIResponse apiResponse = new APIResponse();
 
@@ -176,7 +252,16 @@ public class DoctorController {
 
 	// create doctorsAvailability
 	@PostMapping("doctorsavailability")
-	public ResponseEntity<APIResponse> addDoctorsAvailability(@RequestBody DoctorsAvailability doctorsAvailability) {
+	public ResponseEntity<APIResponse> addDoctorsAvailability(@RequestBody DoctorsAvailability doctorsAvailability,
+			@RequestHeader(value = "authorization", defaultValue = "") String auth) {
+
+		// authorization
+		ResponseEntity<APIResponse> tokenVerificationResponse = jwtUtils.verifyToken(auth);
+
+		// Return the response if the token is invalid/expired
+		if (tokenVerificationResponse != null) {
+			return tokenVerificationResponse;
+		}
 
 		APIResponse apiResponse = new APIResponse();
 
@@ -195,7 +280,16 @@ public class DoctorController {
 
 	// update doctorsAvailability
 	@PutMapping("doctorsavailability")
-	public ResponseEntity<APIResponse> updateDoctorsAvailability(@RequestBody DoctorsAvailability doctorsAvailability) {
+	public ResponseEntity<APIResponse> updateDoctorsAvailability(@RequestBody DoctorsAvailability doctorsAvailability,
+			@RequestHeader(value = "authorization", defaultValue = "") String auth) {
+
+		// authorization
+		ResponseEntity<APIResponse> tokenVerificationResponse = jwtUtils.verifyToken(auth);
+
+		// Return the response if the token is invalid/expired
+		if (tokenVerificationResponse != null) {
+			return tokenVerificationResponse;
+		}
 
 		APIResponse apiResponse = new APIResponse();
 
@@ -214,7 +308,16 @@ public class DoctorController {
 
 	// Delete doctorsAvailability
 	@DeleteMapping("doctorsAvailability/{id}")
-	public ResponseEntity<APIResponse> deleteDoctorsAvailability(@PathVariable Integer id) {
+	public ResponseEntity<APIResponse> deleteDoctorsAvailability(@PathVariable Integer id,
+			@RequestHeader(value = "authorization", defaultValue = "") String auth) {
+
+		// authorization
+		ResponseEntity<APIResponse> tokenVerificationResponse = jwtUtils.verifyToken(auth);
+
+		// Return the response if the token is invalid/expired
+		if (tokenVerificationResponse != null) {
+			return tokenVerificationResponse;
+		}
 
 		APIResponse apiResponse = new APIResponse();
 
@@ -234,7 +337,15 @@ public class DoctorController {
 	// create consultationnote
 	@PostMapping("consultationnote/{staffid}")
 	public ResponseEntity<APIResponse> addConsultationNote(@RequestBody ConsultationNote consultationNote,
-			@PathVariable Integer staffid) {
+			@PathVariable Integer staffid, @RequestHeader(value = "authorization", defaultValue = "") String auth) {
+
+		// authorization
+		ResponseEntity<APIResponse> tokenVerificationResponse = jwtUtils.verifyToken(auth);
+
+		// Return the response if the token is invalid/expired
+		if (tokenVerificationResponse != null) {
+			return tokenVerificationResponse;
+		}
 
 		APIResponse apiResponse = new APIResponse();
 
@@ -254,12 +365,21 @@ public class DoctorController {
 	// create medicineprescriptions
 	@PostMapping("medicineprescription/{staffid}")
 	public ResponseEntity<APIResponse> addPrescription(@RequestBody MedicinePrescription medicinePrescription,
-			@PathVariable Integer staffid) {
+			@PathVariable Integer staffid, @RequestHeader(value = "authorization", defaultValue = "") String auth) {
+
+		// authorization
+		ResponseEntity<APIResponse> tokenVerificationResponse = jwtUtils.verifyToken(auth);
+
+		// Return the response if the token is invalid/expired
+		if (tokenVerificationResponse != null) {
+			return tokenVerificationResponse;
+		}
 
 		APIResponse apiResponse = new APIResponse();
 
 		try {
-			MedicinePrescription medicinePrescriptionEntity = doctorService.addPrescription(medicinePrescription, staffid);
+			MedicinePrescription medicinePrescriptionEntity = doctorService.addPrescription(medicinePrescription,
+					staffid);
 			apiResponse.setStatus(200);
 			apiResponse.setData(medicinePrescriptionEntity);
 
