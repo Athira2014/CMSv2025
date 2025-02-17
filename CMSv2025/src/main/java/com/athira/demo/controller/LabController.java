@@ -237,7 +237,8 @@ public class LabController {
 	// Update lab test prescriptions
 	@PutMapping("labtestprescription")
 	public ResponseEntity<APIResponse> updateLabTestPrescription(
-			@RequestBody LabTestPrescriptionDto labTestPrescriptionDto) {
+			@RequestBody LabTestPrescriptionDto labTestPrescriptionDto,
+			@RequestHeader(value = "authorizing", defaultValue = "")String auth) {
 
 		APIResponse apiResponse = new APIResponse();
 		ResponseEntity<APIResponse> tokenResponse = jwtUtils.verifyToken(auth);
